@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { HashRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Users, 
@@ -22,7 +22,11 @@ import {
   UserPlus,
   FilePlus,
   AlertTriangle,
-  Calculator
+  Calculator,
+  Lock,
+  Eye,
+  EyeOff,
+  LogOut
 } from 'lucide-react';
 import { Client, FirmProfile, Invoice, Notice } from './types';
 import { INITIAL_CLIENTS, INITIAL_FIRM_PROFILE, INITIAL_NOTICES, INITIAL_INVOICES } from './data';
@@ -39,6 +43,104 @@ import Reports from './pages/Reports';
 import ClientDetailDashboard from './pages/ClientDetailDashboard';
 import NoticeVault from './pages/NoticeVault';
 import TaxCalculators from './pages/TaxCalculators';
+
+// --- Authentication Components ---
+
+const LoginPage: React.FC<{ onLogin: () => void; isDarkMode: boolean }> = ({ onLogin, isDarkMode }) => {
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoggingIn(true);
+    setError('');
+
+    // Simulate network delay
+    setTimeout(() => {
+      if (password === 'admin123') {
+        localStorage.setItem('taxease_auth', 'true');
+        onLogin();
+      } else {
+        setError('Invalid credentials. Access denied.');
+        setIsLoggingIn(false);
+      }
+    }, 1200);
+  };
+
+  return (
+    <div className={`min-h-screen flex items-center justify-center p-6 transition-colors duration-500 ${isDarkMode ? 'bg-slate-950' : 'bg-slate-50'}`}>
+      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
+        <div className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-indigo-500 rounded-full blur-[120px]"></div>
+        <div className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] bg-indigo-600 rounded-full blur-[120px]"></div>
+      </div>
+
+      <div className="w-full max-w-md relative z-10 animate-in fade-in zoom-in-95 duration-700">
+        <div className={`bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl rounded-[3rem] p-10 shadow-2xl border border-white/20 dark:border-slate-800 transition-all`}>
+          <div className="text-center mb-10">
+            <div className="w-16 h-16 bg-indigo-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-indigo-500/30">
+              <Lock size={32} className="text-white" />
+            </div>
+            <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">TaxEase Pro</h1>
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mt-2">Compliance Vault Access</p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Access Password</label>
+              <div className="relative group">
+                <input 
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  placeholder="Enter firm key..."
+                  className="w-full px-6 py-4 bg-white/50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 font-bold text-slate-700 dark:text-white transition-all shadow-sm group-hover:border-indigo-200 dark:group-hover:border-indigo-900"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button 
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-600 transition-colors"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+              {error && <p className="text-[9px] font-black text-rose-500 uppercase tracking-widest mt-2 ml-1 animate-pulse">{error}</p>}
+            </div>
+
+            <button 
+              type="submit"
+              disabled={isLoggingIn}
+              className="w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-2xl shadow-indigo-600/30 hover:bg-indigo-700 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-3"
+            >
+              {isLoggingIn ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <span>Authenticating...</span>
+                </>
+              ) : (
+                <>
+                  <Zap size={16} />
+                  <span>Decrypt & Enter</span>
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800 text-center">
+            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-loose">
+              Protected by 256-bit Statutory Encryption<br/>
+              A.Y. 2024-25 Active Session
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- Nav & UI Helpers ---
 
 const NavItem: React.FC<{ to: string; icon: React.ReactNode; label: string; isDarkMode: boolean; onClick?: () => void }> = ({ to, icon, label, isDarkMode, onClick }) => {
   const location = useLocation();
@@ -60,7 +162,7 @@ const NavItem: React.FC<{ to: string; icon: React.ReactNode; label: string; isDa
   );
 };
 
-const QuickActionDropdown: React.FC<{ isDarkMode: boolean; onAction: (type: string) => void }> = ({ isDarkMode, onAction }) => {
+const QuickActionDropdown: React.FC<{ isDarkMode: boolean; onAction: (type: string) => void; onLogout: () => void }> = ({ isDarkMode, onAction, onLogout }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -109,11 +211,21 @@ const QuickActionDropdown: React.FC<{ isDarkMode: boolean; onAction: (type: stri
             <AlertTriangle size={14} className="text-amber-500" />
             Record Notice
           </button>
+          <div className="h-px bg-slate-100 dark:bg-slate-800 my-2"></div>
+          <button 
+            onClick={onLogout}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-[10px] font-black uppercase tracking-wider transition-all text-rose-500 ${isDarkMode ? 'hover:bg-slate-800' : 'hover:bg-slate-50'}`}
+          >
+            <LogOut size={14} />
+            Secure Sign Out
+          </button>
         </div>
       )}
     </div>
   );
 };
+
+// --- Main App Logic ---
 
 const MainContent: React.FC<{ 
   clients: Client[]; 
@@ -130,9 +242,11 @@ const MainContent: React.FC<{
   setIsDarkMode: (dark: boolean) => void;
   isMobileMenuOpen: boolean;
   setIsMobileMenuOpen: (open: boolean) => void;
+  onLogout: () => void;
 }> = ({ 
   clients, setClients, invoices, setInvoices, notices, setNotices, firmProfile, setFirmProfile, 
-  isAddClientOpen, setIsAddClientOpen, isDarkMode, setIsDarkMode, isMobileMenuOpen, setIsMobileMenuOpen 
+  isAddClientOpen, setIsAddClientOpen, isDarkMode, setIsDarkMode, isMobileMenuOpen, setIsMobileMenuOpen,
+  onLogout
 }) => {
   const navigate = useNavigate();
   
@@ -201,7 +315,7 @@ const MainContent: React.FC<{
             </button>
           </div>
 
-          <QuickActionDropdown isDarkMode={isDarkMode} onAction={handleQuickAction} />
+          <QuickActionDropdown isDarkMode={isDarkMode} onAction={handleQuickAction} onLogout={onLogout} />
           
           <Link to="/settings" className={`flex items-center gap-2 p-1 pr-3 rounded-2xl border transition-all hover:border-indigo-200 ${isDarkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-slate-50 border-slate-100'}`}>
             {firmProfile.logoUrl ? (
@@ -258,6 +372,15 @@ const MainContent: React.FC<{
               <NavItem to="/comms" icon={<MessageSquare size={18} />} label="Communication" isDarkMode={isDarkMode} onClick={() => setIsMobileMenuOpen(false)} />
               <NavItem to="/settings" icon={<SettingsIcon size={18} />} label="Settings" isDarkMode={isDarkMode} onClick={() => setIsMobileMenuOpen(false)} />
             </nav>
+            <div className="mt-auto pt-6 border-t dark:border-slate-800">
+              <button 
+                onClick={onLogout}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-wider text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/10 transition-all"
+              >
+                <LogOut size={16} />
+                Sign Out
+              </button>
+            </div>
           </aside>
         </div>
       )}
@@ -277,6 +400,7 @@ const MainContent: React.FC<{
             <Route path="/settings" element={<SettingsPage firmProfile={firmProfile} setFirmProfile={setFirmProfile} />} />
             <Route path="/comms" element={<CommunicationCenter clients={clients} firmProfile={firmProfile} />} />
             <Route path="/reports" element={<Reports clients={clients} />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
       </main>
@@ -285,6 +409,9 @@ const MainContent: React.FC<{
 };
 
 const App: React.FC = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem('taxease_auth') === 'true';
+  });
   const [clients, setClients] = useState<Client[]>(INITIAL_CLIENTS);
   const [firmProfile, setFirmProfile] = useState<FirmProfile>(INITIAL_FIRM_PROFILE);
   const [invoices, setInvoices] = useState<Invoice[]>(INITIAL_INVOICES);
@@ -305,18 +432,28 @@ const App: React.FC = () => {
     }
     localStorage.setItem('darkMode', isDarkMode.toString());
   }, [isDarkMode]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('taxease_auth');
+    setIsAuthenticated(false);
+  };
   
   return (
     <HashRouter>
-      <MainContent 
-        clients={clients} setClients={setClients}
-        invoices={invoices} setInvoices={setInvoices}
-        notices={notices} setNotices={setNotices}
-        firmProfile={firmProfile} setFirmProfile={setFirmProfile}
-        isAddClientOpen={isAddClientOpen} setIsAddClientOpen={setIsAddClientOpen}
-        isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode}
-        isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen}
-      />
+      {!isAuthenticated ? (
+        <LoginPage onLogin={() => setIsAuthenticated(true)} isDarkMode={isDarkMode} />
+      ) : (
+        <MainContent 
+          clients={clients} setClients={setClients}
+          invoices={invoices} setInvoices={setInvoices}
+          notices={notices} setNotices={setNotices}
+          firmProfile={firmProfile} setFirmProfile={setFirmProfile}
+          isAddClientOpen={isAddClientOpen} setIsAddClientOpen={setIsAddClientOpen}
+          isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode}
+          isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen}
+          onLogout={handleLogout}
+        />
+      )}
     </HashRouter>
   );
 };
