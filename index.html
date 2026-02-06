@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaxEase India - Compliance Management Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,700&family=Source+Serif+4:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-glow: radial-gradient(rgba(79, 70, 229, 0.15), rgba(79, 70, 229, 0));
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* High-Fidelity Bento Shadows */
+        .bento-shadow {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04), 0 4px 10px rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        
+        .dark .bento-shadow {
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        /* Professional 0.5px Borders */
+        .border-px-05 {
+            border-width: 0.5px;
+        }
+
+        /* Invoice Watermark */
+        .invoice-watermark {
+            background-image: repeating-linear-gradient(-45deg, transparent, transparent 100px, rgba(79, 70, 229, 0.02) 100px, rgba(79, 70, 229, 0.02) 200px);
+        }
+
+        /* Status Orb Micro-Branding */
+        .status-orb {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            position: relative;
+            flex-shrink: 0;
+        }
+        
+        .status-orb-pulse::after {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            border-radius: 50%;
+            background: inherit;
+            animation: orb-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes orb-pulse {
+            0% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(2.2); opacity: 0; }
+            100% { transform: scale(1); opacity: 0; }
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Bottom Sheet Slide-In */
+        @keyframes sheet-up {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .animate-sheet-up {
+            animation: sheet-up 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Glassmorphism */
+        .glass-panel {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.7);
+        }
+        .dark .glass-panel {
+            background: rgba(15, 23, 42, 0.7);
+        }
+
+        .font-serif-premium {
+            font-family: 'Playfair Display', serif;
+        }
+
+        @media print {
+            @page {
+                margin: 0;
+                size: auto;
+            }
+            body { 
+                background: white !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            body > * {
+                display: none !important;
+            }
+            #root {
+                display: block !important;
+                background: white !important;
+            }
+            #root * {
+                visibility: hidden !important;
+            }
+            #print-area, #print-area * {
+                visibility: visible !important;
+            }
+            #print-area {
+                display: block !important;
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: white !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.13.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+    "recharts": "https://esm.sh/recharts@^3.7.0",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "@google/genai": "https://esm.sh/@google/genai@^1.39.0"
+  }
+}
+</script>
+</head>
+<body class="bg-slate-50 text-slate-900 overflow-x-hidden">
+    <div id="root"></div>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "name": "TaxEase India - Compliance Management Pro",
+  "description": "A comprehensive Indian compliance management platform for tax practitioners to manage GST, ITR, DSC expiries, refunds, and professional invoicing with WhatsApp/Email integration.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
